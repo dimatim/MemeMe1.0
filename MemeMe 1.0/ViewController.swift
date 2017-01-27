@@ -26,17 +26,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var toolBar: UIToolbar!
     
     @IBAction func pickAnImageFromAlbum(_ sender: Any) {
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true, completion: enableShare)
+        pickAnImage(source: .photoLibrary)
     }
     
     @IBAction func pickAnImageFromCamera(_ sender: Any) {
+        pickAnImage(source: .camera)
+    }
+    
+    func pickAnImage(source: UIImagePickerControllerSourceType) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
-        imagePicker.sourceType = .camera
+        imagePicker.sourceType = source
         present(imagePicker, animated: true, completion: enableShare)
+        
     }
     
     @IBAction func shareMeme(_ sender: Any) {
@@ -67,17 +69,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         imageView.contentMode = UIViewContentMode.scaleAspectFit;
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
         
+        setTextAttributes(textField: topTextField)
+        setTextAttributes(textField: bottomTextField)
+    }
+    
+    func setTextAttributes(textField: UITextField) {
         let memeTextAttributes:[String:Any] = [
             NSStrokeColorAttributeName: UIColor.black,
             NSForegroundColorAttributeName: UIColor.white,
             NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
             NSStrokeWidthAttributeName: -3.0]
-        topTextField.defaultTextAttributes = memeTextAttributes
-        bottomTextField.defaultTextAttributes = memeTextAttributes
-        topTextField.contentVerticalAlignment = UIControlContentVerticalAlignment.center
-        topTextField.textAlignment = NSTextAlignment.center
-        bottomTextField.contentVerticalAlignment = UIControlContentVerticalAlignment.center
-        bottomTextField.textAlignment = NSTextAlignment.center
+        textField.defaultTextAttributes = memeTextAttributes
+        textField.contentVerticalAlignment = UIControlContentVerticalAlignment.center
+        textField.textAlignment = NSTextAlignment.center
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -103,8 +107,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func generateMemedImage() -> UIImage {
         
-        navBar.isHidden = true
-        toolBar.isHidden = true
+        showBars(show: false)
         
         // Render view to an image
         UIGraphicsBeginImageContext(self.view.frame.size)
@@ -112,10 +115,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
-        navBar.isHidden = false
-        toolBar.isHidden = false
+        showBars(show: true)
         
         return memedImage
+    }
+    
+    func showBars(show: Bool) {
+        navBar.isHidden = !show
+        toolBar.isHidden = !show
     }
     
     func save() {
@@ -133,7 +140,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
     
     func getKeyboardHeight(_ notification:Notification) -> CGFloat {
-        
         let userInfo = notification.userInfo
         let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue // of CGRect
         return keyboardSize.cgRectValue.height
