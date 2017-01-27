@@ -21,31 +21,49 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var cameraButton: UIBarButtonItem!
     @IBOutlet weak var topTextField: UITextField!
     @IBOutlet weak var bottomTextField: UITextField!
-    @IBOutlet weak var shareButton: UIBarButtonItem!//TODO disable button if meme not ready
+    @IBOutlet weak var shareButton: UIBarButtonItem!
+    @IBOutlet weak var navBar: UINavigationBar!
+    @IBOutlet weak var toolBar: UIToolbar!
     
     @IBAction func pickAnImageFromAlbum(_ sender: Any) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true, completion: nil)
+        present(imagePicker, animated: true, completion: enableShare)
     }
     
     @IBAction func pickAnImageFromCamera(_ sender: Any) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = .camera
-        present(imagePicker, animated: true, completion: nil)
+        present(imagePicker, animated: true, completion: enableShare)
     }
     
     @IBAction func shareMeme(_ sender: Any) {
-        let meme = generateMemedImage()
-        let controller = UIActivityViewController(activityItems: [meme], applicationActivities: nil)
-        self.present(controller, animated: true, completion: save)
+        if (imageView.image != nil
+            && topTextField.text != nil
+            && bottomTextField.text != nil) {
+            let meme = generateMemedImage()
+            let controller = UIActivityViewController(activityItems: [meme], applicationActivities: nil)
+            self.present(controller, animated: true, completion: save)
+        }
+    }
+    
+    func enableShare() {
+        shareButton.isEnabled = true
+    }
+    
+    @IBAction func cancel(_ sender: Any) {
+        imageView.image = nil
+        topTextField.text = ""
+        bottomTextField.text = ""
+        shareButton.isEnabled = false
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        shareButton.isEnabled = false
         imageView.contentMode = UIViewContentMode.scaleAspectFit;
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
         
@@ -53,9 +71,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             NSStrokeColorAttributeName: UIColor.black,
             NSForegroundColorAttributeName: UIColor.white,
             NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-            NSStrokeWidthAttributeName: 3.0]
+            NSStrokeWidthAttributeName: -3.0]
         topTextField.defaultTextAttributes = memeTextAttributes
         bottomTextField.defaultTextAttributes = memeTextAttributes
+        topTextField.contentVerticalAlignment = UIControlContentVerticalAlignment.center
+        topTextField.textAlignment = NSTextAlignment.center
+        bottomTextField.contentVerticalAlignment = UIControlContentVerticalAlignment.center
+        bottomTextField.textAlignment = NSTextAlignment.center
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -81,7 +103,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func generateMemedImage() -> UIImage {
         
-        // TODO: Hide toolbar and navbar
+        navBar.isHidden = true
+        toolBar.isHidden = true
         
         // Render view to an image
         UIGraphicsBeginImageContext(self.view.frame.size)
@@ -89,7 +112,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
-        // TODO: Show toolbar and navbar
+        navBar.isHidden = false
+        toolBar.isHidden = false
         
         return memedImage
     }
