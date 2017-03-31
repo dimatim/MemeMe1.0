@@ -43,7 +43,12 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
             && bottomTextField.text != nil) {
             let meme = generateMemedImage()
             let controller = UIActivityViewController(activityItems: [meme], applicationActivities: nil)
-            self.present(controller, animated: true, completion: save)
+            controller.completionWithItemsHandler = {(activity, completed, items, error) in
+                if (completed) {
+                    let _ = self.save()
+                }
+            }
+            self.present(controller, animated: true, completion: nil)
         }
     }
     
@@ -107,8 +112,8 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         showBars(show: false)
         
         // Render view to an image
-        UIGraphicsBeginImageContext(self.view.frame.size)
-        view.drawHierarchy(in: self.view.frame, afterScreenUpdates: true)
+        UIGraphicsBeginImageContext(view.frame.size)
+        view.drawHierarchy(in: view.frame, afterScreenUpdates: true)
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
@@ -124,7 +129,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     func save() {
         // Create the meme
-        let meme = Meme(topText: topTextField.text!, bottomText: bottomTextField.text!, originalImage: imageView.image!, memedImage: generateMemedImage())//TODO why is this needed?
+        _ = Meme(topText: topTextField.text!, bottomText: bottomTextField.text!, originalImage: imageView.image!, memedImage: generateMemedImage())//TODO why is this needed?
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -133,7 +138,9 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     }
 
     func keyboardWillShow(_ notification:Notification) {
-        view.frame.origin.y = 0 - getKeyboardHeight(notification)
+        if !topTextField.isFirstResponder{
+            view.frame.origin.y = -getKeyboardHeight(notification)
+        }
     }
     
     func keyboardWillHide(_ notification:Notification) {
