@@ -18,12 +18,15 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     @IBOutlet weak var navBar: UINavigationBar!
     @IBOutlet weak var toolBar: UIToolbar!
     
-    @IBAction func pickAnImageFromAlbum(_ sender: Any) {
-        pickAnImage(source: .photoLibrary)
-    }
-    
-    @IBAction func pickAnImageFromCamera(_ sender: Any) {
-        pickAnImage(source: .camera)
+    @IBAction func pickAnImage(_ sender: UIBarButtonItem) {
+        switch sender.tag {
+        case 0:
+            pickAnImage(source: .camera)
+        case 1:
+            pickAnImage(source: .photoLibrary)
+        default:
+            pickAnImage(source: .photoLibrary)
+        }
     }
     
     func pickAnImage(source: UIImagePickerControllerSourceType) {

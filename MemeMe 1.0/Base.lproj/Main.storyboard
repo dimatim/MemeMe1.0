@@ -32,12 +32,12 @@
                                 <items>
                                     <barButtonItem systemItem="camera" id="gjx-EB-UsJ" userLabel="CameraButton">
                                         <connections>
-                                            <action selector="pickAnImageFromCamera:" destination="BYZ-38-t0r" id="isE-mH-oZB"/>
+                                            <action selector="pickAnImage:" destination="BYZ-38-t0r" id="rtd-6O-nyg"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Album" id="qfA-ev-gkW" userLabel="AlbumButton">
+                                    <barButtonItem tag="1" title="Album" id="qfA-ev-gkW" userLabel="AlbumButton">
                                         <connections>
-                                            <action selector="pickAnImageFromAlbum:" destination="BYZ-38-t0r" id="Ndz-0a-dWg"/>
+                                            <action selector="pickAnImage:" destination="BYZ-38-t0r" id="sAF-in-0xk"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -100,7 +100,7 @@
                     </view>
                     <connections>
                         <outlet property="bottomTextField" destination="vRt-pa-dZb" id="mAx-uw-3vp"/>
-                        <outlet property="cameraButton" destination="gjx-EB-UsJ" id="D6v-V3-LyV"/>
+                        <outlet property="cameraButton" destination="gjx-EB-UsJ" id="1zb-Qs-oWI"/>
                         <outlet property="imageView" destination="Yio-rB-OYp" id="TXs-lA-RJl"/>
                         <outlet property="navBar" destination="7UQ-ei-kwR" id="mO4-uX-hHR"/>
                         <outlet property="shareButton" destination="pw6-7X-iT0" id="PUm-Zp-dvd"/>
